@@ -607,7 +607,10 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
         <div class="d-card gold"><div class="d-card-title">Do Not Guess</div><div class="d-card-body">Guessing on ambiguous tasks during onboarding inflates error rates and skews calibration data. When in doubt — flag it and escalate through the designated channel.</div></div>
       </div>
     </div>
-    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+  <p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">© Lauren McDonald · learningcraftai.com · Sample — not for redistribution or reuse</p>
+  <p style="font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(0,212,200,.35);letter-spacing:.06em">Portfolio · Private Share Only</p>
+</div></div>
   </div>
 </div>
 
@@ -664,7 +667,10 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
         <div class="d-card"><div class="d-card-title">Conflating Dimensions</div><div class="d-card-body">Scoring Clarity based on Helpfulness or vice versa. Use each dimension's specific definition — don't blend them.</div></div>
       </div>
     </div>
-    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+  <p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">© Lauren McDonald · learningcraftai.com · Sample — not for redistribution or reuse</p>
+  <p style="font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(0,212,200,.35);letter-spacing:.06em">Portfolio · Private Share Only</p>
+</div></div>
   </div>
 </div>
 
@@ -711,7 +717,10 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
         <div class="d-card violet"><div class="d-card-title" style="color:var(--violet)">P4 — Medium: Throughput Rate</div><div class="d-card-body">7-point gap. Likely a process issue, not a training gap. Audit the workflow before building new content. Monitor for 2 weeks first.</div></div>
       </div>
     </div>
-    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+  <p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">© Lauren McDonald · learningcraftai.com · Sample — not for redistribution or reuse</p>
+  <p style="font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(0,212,200,.35);letter-spacing:.06em">Portfolio · Private Share Only</p>
+</div></div>
   </div>
 </div>
 
@@ -782,7 +791,10 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
         <div class="check-item"><div class="check-box"></div><div class="check-txt">Escalation path confirmed for edge cases that may arise</div></div>
       </div>
     </div>
-    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+  <p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">© Lauren McDonald · learningcraftai.com · Sample — not for redistribution or reuse</p>
+  <p style="font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(0,212,200,.35);letter-spacing:.06em">Portfolio · Private Share Only</p>
+</div></div>
   </div>
 </div>
 
@@ -868,31 +880,10 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
 </div><!-- /main -->
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-const PW = "Tr@inDesign#491";
-
-function unlock() {
-  const v = document.getElementById('pw').value;
-  const err = document.getElementById('pw-err');
-  const field = document.getElementById('pw');
-  if (v === PW) {
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('main').style.display = 'block';
-    sessionStorage.setItem('lm_auth','1');
-    initObserver();
-  } else {
-    field.classList.add('err');
-    err.style.display = 'block';
-    setTimeout(() => field.classList.remove('err'), 400);
-  }
-}
-
-document.getElementById('pw').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
-
-if (sessionStorage.getItem('lm_auth')==='1') {
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('main').style.display = 'block';
-  setTimeout(initObserver, 50);
-}
+// No password gate
+document.getElementById('gate').style.display = 'none';
+document.getElementById('main').style.display = 'block';
+initObserver();
 
 function initObserver() {
   const obs = new IntersectionObserver(entries => {
@@ -909,5 +900,9 @@ function initObserver() {
   });
 }
 </script>
+
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(10,15,30,.92);border-top:1px solid rgba(0,212,200,.1);padding:.35rem 2rem;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+  <span style="font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(0,212,200,.3);letter-spacing:.12em;text-transform:uppercase;">Lauren McDonald · learningcraftai.com · Private Share · Not for Redistribution</span>
+</div>
 </body>
 </html>
