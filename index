@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lauren McDonald — AI Workforce & Learning Design</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a0f1e;
+  --navy-2: #111827;
+  --navy-3: #1a2235;
+  --navy-4: #222d42;
+  --cyan: #00d4c8;
+  --cyan-dim: rgba(0,212,200,0.12);
+  --cyan-glow: rgba(0,212,200,0.07);
+  --gold: #f5c842;
+  --violet: #7c6af7;
+  --white: #f0f4ff;
+  --muted: #8892a4;
+  --border: rgba(0,212,200,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--white);font-family:'Outfit',sans-serif;font-weight:300;overflow-x:hidden;}
+
+/* ── GATE ── */
+#gate{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;}
+.gate-inner{width:100%;max-width:400px;padding:2rem;text-align:center;}
+.gate-eyebrow{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--cyan);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.8rem;}
+.gate-title{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:400;margin-bottom:0.6rem;}
+.gate-sub{font-size:0.85rem;color:var(--muted);line-height:1.65;margin-bottom:2rem;}
+.gate-field{width:100%;background:var(--navy-3);border:1px solid var(--border);border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:0.9rem;letter-spacing:0.1em;padding:0.85rem 1.2rem;margin-bottom:0.7rem;text-align:center;outline:none;transition:border-color .2s;}
+.gate-field:focus{border-color:var(--cyan);}
+.gate-field.err{border-color:#e05555;animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px)};}
+.gate-err{font-family:'DM Mono',monospace;font-size:0.67rem;color:#e05555;letter-spacing:.06em;margin-bottom:.7rem;display:none;}
+.gate-btn{width:100%;background:var(--cyan);color:var(--navy);font-weight:600;font-size:.85rem;letter-spacing:.07em;padding:.85rem;border:none;border-radius:2px;cursor:pointer;transition:opacity .2s;}
+.gate-btn:hover{opacity:.85;}
+.gate-note{font-size:.72rem;color:var(--muted);margin-top:1.8rem;}
+.gate-note a{color:var(--cyan);text-decoration:none;}
+
+/* ── MAIN ── */
+#main{display:none;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(10,15,30,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+.nav-brand{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase;text-decoration:none;}
+.nav-links{display:flex;align-items:center;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.83rem;letter-spacing:.04em;transition:color .2s;}
+.nav-links a:hover{color:var(--cyan);}
+.nav-cta{border:1px solid var(--cyan)!important;color:var(--cyan)!important;padding:.4rem 1.1rem;border-radius:2px;font-size:.76rem!important;}
+.nav-cta:hover{background:var(--cyan)!important;color:var(--navy)!important;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding:9rem 3rem 5rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 55% 55% at 72% 38%,rgba(0,212,200,.07) 0%,transparent 70%),radial-gradient(ellipse 40% 50% at 18% 72%,rgba(124,106,247,.06) 0%,transparent 65%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,200,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,200,.035) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse at 60% 40%,black 0%,transparent 65%);}
+.hero-content{position:relative;z-index:1;max-width:760px;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.6rem;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--cyan);letter-spacing:.18em;text-transform:uppercase;margin-bottom:1.6rem;opacity:0;animation:fadeUp .7s ease .15s forwards;}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--cyan);}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2.8rem,6vw,5.2rem);line-height:1.06;font-weight:400;margin-bottom:1.4rem;opacity:0;animation:fadeUp .7s ease .3s forwards;}
+.hero h1 em{font-style:italic;color:var(--cyan);}
+.hero-sub{font-size:1.05rem;color:var(--muted);line-height:1.75;max-width:540px;margin-bottom:2.4rem;opacity:0;animation:fadeUp .7s ease .45s forwards;}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.8rem;opacity:0;animation:fadeUp .7s ease .55s forwards;}
+.pill{font-family:'DM Mono',monospace;font-size:.67rem;letter-spacing:.08em;padding:.28rem .75rem;border:1px solid var(--border);border-radius:2px;color:var(--muted);background:rgba(255,255,255,.02);}
+.hero-actions{display:flex;gap:.9rem;opacity:0;animation:fadeUp .7s ease .65s forwards;}
+.btn-p{background:var(--cyan);color:var(--navy);font-weight:600;font-size:.83rem;letter-spacing:.06em;padding:.78rem 1.9rem;border:none;border-radius:2px;cursor:pointer;text-decoration:none;display:inline-block;transition:opacity .2s,transform .2s;}
+.btn-p:hover{opacity:.87;transform:translateY(-1px);}
+.btn-g{background:transparent;color:var(--white);font-size:.83rem;letter-spacing:.06em;padding:.78rem 1.9rem;border:1px solid rgba(255,255,255,.14);border-radius:2px;text-decoration:none;display:inline-block;transition:border-color .2s,color .2s;}
+.btn-g:hover{border-color:var(--cyan);color:var(--cyan);}
+.hero-stats{position:absolute;bottom:3.5rem;right:3rem;display:flex;gap:2.8rem;opacity:0;animation:fadeUp .7s ease .9s forwards;}
+.stat-num{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--cyan);line-height:1;}
+.stat-lbl{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:.15rem;}
+
+/* ── SECTIONS ── */
+.section{padding:6rem 3rem;position:relative;z-index:1;}
+.section.dark{background:var(--navy-2);}
+.s-label{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem;}
+.s-label::after{content:'';width:28px;height:1px;background:var(--cyan);opacity:.5;}
+.s-title{font-family:'DM Serif Display',serif;font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;line-height:1.1;margin-bottom:.9rem;}
+.s-desc{color:var(--muted);font-size:.95rem;line-height:1.75;max-width:540px;margin-bottom:3.2rem;}
+
+/* ── WORK GRID ── */
+.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--border);border:1px solid var(--border);}
+.w-card{background:var(--navy-2);padding:2rem;position:relative;overflow:hidden;transition:background .25s;text-decoration:none;color:inherit;display:block;}
+.w-card:hover{background:var(--navy-3);}
+.w-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .25s;}
+.w-card:hover::after{background:var(--cyan);}
+.w-card.gold:hover::after{background:var(--gold);}
+.w-card.violet:hover::after{background:var(--violet);}
+
+.c-type{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:.45rem;margin-bottom:1.1rem;}
+.c-dot{width:4px;height:4px;border-radius:50%;background:var(--cyan);}
+.c-type.gold{color:var(--gold);} .c-type.gold .c-dot{background:var(--gold);}
+.c-type.violet{color:var(--violet);} .c-type.violet .c-dot{background:var(--violet);}
+
+.c-thumb{width:100%;aspect-ratio:16/9;background:var(--navy-4);border:1px solid var(--border);margin-bottom:1.3rem;position:relative;overflow:hidden;}
+.sp{width:100%;height:100%;padding:1.1rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;}
+.sl{height:3px;border-radius:1px;opacity:.45;margin-bottom:.35rem;}
+.sl-s{width:38%;} .sl-m{width:62%;} .sl-l{width:84%;}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;}
+.sb{height:18px;border-radius:2px;opacity:.18;}
+.wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.wm span{font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.18em;color:rgba(255,255,255,.09);transform:rotate(-24deg);white-space:nowrap;}
+
+.c-title{font-size:.95rem;font-weight:500;line-height:1.35;margin-bottom:.5rem;}
+.c-desc{font-size:.79rem;color:var(--muted);line-height:1.6;margin-bottom:1.1rem;}
+.c-tags{display:flex;flex-wrap:wrap;gap:.35rem;}
+.c-tag{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.05em;padding:.18rem .55rem;border:1px solid rgba(255,255,255,.07);border-radius:2px;color:var(--muted);}
+.c-arrow{display:flex;align-items:center;gap:.45rem;font-family:'DM Mono',monospace;font-size:.67rem;letter-spacing:.08em;color:var(--cyan);margin-top:1.2rem;transition:gap .2s;}
+.w-card.gold .c-arrow{color:var(--gold);}
+.w-card.violet .c-arrow{color:var(--violet);}
+.w-card:hover .c-arrow{gap:.7rem;}
+
+/* ── INLINE DOCS ── */
+.doc-section{padding:6rem 3rem;position:relative;z-index:1;}
+.doc-section:nth-child(even){background:var(--navy-2);}
+.doc-wrap{max-width:860px;}
+.doc-wrap.wide{max-width:1060px;}
+
+.doc-lbl{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--cyan);letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem;}
+.doc-lbl::after{content:'';width:24px;height:1px;background:var(--cyan);opacity:.5;}
+.doc-title{font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;line-height:1.1;margin-bottom:.7rem;}
+.doc-subtitle{color:var(--muted);font-size:.93rem;line-height:1.75;max-width:580px;margin-bottom:.8rem;}
+.wm-badge{display:inline-flex;align-items:center;gap:.5rem;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.08em;border:1px solid var(--border);padding:.3rem .8rem;border-radius:2px;margin-bottom:2.5rem;}
+
+.d-sec{margin-bottom:2.8rem;}
+.d-sec-label{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--cyan);letter-spacing:.14em;text-transform:uppercase;padding-bottom:.5rem;border-bottom:1px solid var(--border);margin-bottom:1.3rem;}
+.d-body{font-size:.87rem;color:rgba(240,244,255,.78);line-height:1.82;margin-bottom:.9rem;}
+
+.d-card{background:var(--navy-3);border:1px solid var(--border);border-radius:3px;padding:1.3rem 1.6rem;margin-bottom:.9rem;border-left:2px solid var(--cyan);}
+.d-card.gold{border-left-color:var(--gold);}
+.d-card.violet{border-left-color:var(--violet);}
+.d-card.red{border-left-color:#e05555;}
+.d-card-title{font-size:.88rem;font-weight:500;margin-bottom:.35rem;}
+.d-card-body{font-size:.8rem;color:var(--muted);line-height:1.7;}
+
+.d-table{width:100%;border-collapse:collapse;font-size:.81rem;margin-bottom:.9rem;}
+.d-table th{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);padding:.65rem .9rem;text-align:left;border-bottom:1px solid var(--border);background:var(--navy-4);}
+.d-table td{padding:.75rem .9rem;border-bottom:1px solid rgba(0,212,200,.05);color:rgba(240,244,255,.78);vertical-align:top;line-height:1.65;}
+.d-table tr:last-child td{border-bottom:none;}
+.d-table tr:hover td{background:rgba(0,212,200,.018);}
+
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:.59rem;letter-spacing:.05em;padding:.18rem .55rem;border:1px solid var(--border);border-radius:2px;color:var(--muted);margin:.12rem;}
+.tag.c{border-color:var(--cyan);color:var(--cyan);}
+.tag.g{border-color:var(--gold);color:var(--gold);}
+.tag.v{border-color:rgba(124,106,247,.5);color:var(--violet);}
+
+/* gap bars */
+.gap-row{display:grid;grid-template-columns:150px 1fr 52px;align-items:center;gap:.9rem;margin-bottom:.7rem;}
+.gap-lbl{font-size:.79rem;color:rgba(240,244,255,.7);}
+.gap-track{height:7px;background:var(--navy-4);border-radius:4px;overflow:hidden;}
+.gap-fill{height:100%;border-radius:4px;}
+.gap-pct{font-family:'DM Mono',monospace;font-size:.65rem;text-align:right;}
+
+/* checklist */
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.check-item{display:flex;align-items:flex-start;gap:.65rem;padding:.55rem 0;border-bottom:1px solid rgba(0,212,200,.05);}
+.check-box{width:15px;height:15px;border:1px solid var(--cyan);border-radius:2px;flex-shrink:0;margin-top:.1rem;}
+.check-txt{font-size:.81rem;color:rgba(240,244,255,.78);line-height:1.55;}
+
+/* steps */
+.step-row{display:grid;grid-template-columns:36px 1fr;gap:1.1rem;margin-bottom:1.4rem;align-items:start;}
+.step-n{width:30px;height:30px;border-radius:50%;border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.67rem;color:var(--cyan);flex-shrink:0;}
+.step-title{font-size:.91rem;font-weight:500;margin-bottom:.35rem;}
+.step-body{font-size:.82rem;color:var(--muted);line-height:1.72;}
+
+/* ── PLATFORM CARD ── */
+.platform-section{padding:6rem 3rem;background:var(--navy-3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;max-width:1060px;}
+.platform-left{}
+.platform-screen{background:var(--navy);border:1px solid var(--border);border-radius:4px;padding:2rem;position:relative;overflow:hidden;}
+.platform-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(0,212,200,.06) 0%,transparent 60%);}
+.ps-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;position:relative;z-index:1;}
+.ps-logo{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--cyan);letter-spacing:.12em;}
+.ps-live{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--gold);letter-spacing:.1em;display:flex;align-items:center;gap:.35rem;}
+.ps-live::before{content:'●';font-size:.5rem;}
+.ps-stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.6rem;margin-bottom:1.2rem;position:relative;z-index:1;}
+.ps-stat{background:var(--navy-3);border:1px solid var(--border);border-radius:2px;padding:.6rem .7rem;text-align:center;}
+.ps-stat-val{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--cyan);line-height:1;}
+.ps-stat-lbl{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.06em;margin-top:.2rem;}
+.ps-course{background:var(--navy-3);border:1px solid var(--border);border-radius:2px;padding:1rem 1.2rem;position:relative;z-index:1;}
+.ps-course-title{font-size:.85rem;font-weight:500;margin-bottom:.3rem;}
+.ps-course-sub{font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-bottom:.8rem;}
+.ps-lessons{display:flex;flex-direction:column;gap:.4rem;}
+.ps-lesson{display:flex;align-items:center;gap:.6rem;font-size:.75rem;color:rgba(240,244,255,.7);}
+.ps-lesson::before{content:'▶';font-size:.5rem;color:var(--cyan);}
+.platform-right{}
+.platform-right .s-title{margin-bottom:1rem;}
+.platform-right .d-body{margin-bottom:1.5rem;}
+.platform-features{display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem;}
+.pf-item{display:flex;align-items:flex-start;gap:.8rem;}
+.pf-icon{width:28px;height:28px;border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;background:var(--cyan-glow);}
+.pf-text{font-size:.84rem;color:var(--muted);line-height:1.6;padding-top:.15rem;}
+
+/* ── ABOUT STRIP ── */
+.about-strip{padding:4.5rem 3rem;background:var(--navy-4);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:5rem;}
+.about-quote{font-family:'DM Serif Display',serif;font-size:clamp(1.2rem,2.5vw,1.7rem);font-style:italic;line-height:1.5;margin-bottom:.9rem;}
+.about-attr{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.12em;}
+.about-links{flex-shrink:0;display:flex;flex-direction:column;gap:.7rem;}
+.a-link{display:flex;align-items:center;gap:.75rem;font-size:.83rem;color:var(--muted);text-decoration:none;transition:color .2s;white-space:nowrap;}
+.a-link:hover{color:var(--cyan);}
+.a-icon{width:26px;height:26px;border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;font-family:'DM Mono',monospace;}
+
+/* ── CTA ── */
+.cta-section{padding:7rem 3rem;text-align:center;position:relative;overflow:hidden;}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 65% 80% at 50% 50%,rgba(0,212,200,.07) 0%,transparent 70%);}
+.cta-section .s-label{justify-content:center;}
+.cta-section .s-label::after{display:none;}
+.cta-title{font-family:'DM Serif Display',serif;font-size:clamp(1.9rem,4vw,3.2rem);font-weight:400;margin:1rem auto 1.4rem;max-width:580px;line-height:1.15;position:relative;z-index:1;}
+.cta-sub{color:var(--muted);font-size:.95rem;margin-bottom:2.4rem;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.75;position:relative;z-index:1;}
+.cta-actions{display:flex;gap:.9rem;justify-content:center;position:relative;z-index:1;}
+
+/* ── FOOTER ── */
+footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.f-logo{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);letter-spacing:.1em;}
+.f-copy{font-size:.72rem;color:var(--muted);}
+.f-links{display:flex;gap:2rem;list-style:none;}
+.f-links a{font-size:.72rem;color:var(--muted);text-decoration:none;transition:color .2s;}
+.f-links a:hover{color:var(--cyan);}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:0 3rem;}
+
+/* ── ANIMS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease;}
+.fu.vis{opacity:1;transform:translateY(0);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .work-grid{grid-template-columns:1fr 1fr;}
+  .platform-grid{grid-template-columns:1fr;}
+  .checklist{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .section,.doc-section,.platform-section{padding:4rem 1.5rem;}
+  .hero{padding:7rem 1.5rem 4rem;}
+  .hero-stats{display:none;}
+  .work-grid{grid-template-columns:1fr;}
+  .about-strip{flex-direction:column;gap:2rem;padding:3rem 1.5rem;}
+  .cta-actions{flex-direction:column;align-items:center;}
+  footer{flex-direction:column;gap:1rem;text-align:center;}
+  .gap-row{grid-template-columns:120px 1fr 40px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ GATE ═══ -->
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-eyebrow">Lauren McDonald · Portfolio</div>
+    <h1 class="gate-title">Private Access</h1>
+    <p class="gate-sub">This portfolio is shared by invitation. Enter the password provided by Lauren to view her work.</p>
+    <input type="password" class="gate-field" id="pw" placeholder="Enter password" />
+    <div class="gate-err" id="pw-err">Incorrect password — try again.</div>
+    <button class="gate-btn" onclick="unlock()">Enter →</button>
+    <p class="gate-note">Don't have access? <a href="https://learningcraftai.com/contact" target="_blank">Request it here</a></p>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div id="main">
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">Lauren McDonald</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#onboarding">Playbook</a></li>
+    <li><a href="#rubric">Rubric</a></li>
+    <li><a href="#gap">Gap Analysis</a></li>
+    <li><a href="#sop">Calibration SOP</a></li>
+    <li><a href="#platform">Platform</a></li>
+    <li><a href="https://learningcraftai.com/contact" target="_blank" class="nav-cta">Work With Me</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">AI Workforce &amp; Learning Design</div>
+    <h1>I build the systems<br>that make learning<br><em>actually work.</em></h1>
+    <p class="hero-sub">Senior Instructional Designer and Enablement Program Manager with deep roots in AI data operations. I design contributor training, evaluation frameworks, and onboarding infrastructure built around how programs actually run — not how we wish they did.</p>
+    <div class="hero-pills">
+      <span class="pill">ADDIE · Adult Learning Theory</span>
+      <span class="pill">AI / LLM Training Infrastructure</span>
+      <span class="pill">LMS Design &amp; Administration</span>
+      <span class="pill">Contributor Enablement</span>
+      <span class="pill">RLHF · SFT · Red Teaming</span>
+      <span class="pill">Curriculum Design · Gap Analysis</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#work" class="btn-p">See My Work</a>
+      <a href="https://learningcraftai.com/contact" target="_blank" class="btn-g">Work With Me</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">3+</div><div class="stat-lbl">Years in AI L&amp;D</div></div>
+    <div><div class="stat-num">5+</div><div class="stat-lbl">Concurrent Programs</div></div>
+    <div><div class="stat-num">0→1</div><div class="stat-lbl">Builds from Scratch</div></div>
+  </div>
+</section>
+
+<!-- ═══ WORK OVERVIEW ═══ -->
+<section class="section dark" id="work">
+  <div class="s-label">Work Samples</div>
+  <h2 class="s-title fu">What I Design</h2>
+  <p class="s-desc fu">Original frameworks and sample documents representing the full range of what I build — from contributor onboarding to QA calibration systems. Scroll down to read each one in full.</p>
+
+  <div class="work-grid">
+
+    <!-- Card 1 -->
+    <a href="#onboarding" class="w-card fu">
+      <div class="c-type"><span class="c-dot"></span>Sample Document</div>
+      <div class="c-thumb">
+        <div class="sp" style="background:linear-gradient(135deg,#0d1b2a,#0a1628)">
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:#00d4c8;letter-spacing:.1em;margin-bottom:.4rem">CONTRIBUTOR ONBOARDING PLAYBOOK</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:.82rem;color:#f0f4ff;margin-bottom:.6rem">Week-by-Week Program Guide</div>
+            <div class="sl sl-l" style="background:#00d4c8"></div>
+            <div class="sl sl-m" style="background:#00d4c8;margin-top:.3rem"></div>
+          </div>
+          <div class="sg"><div class="sb" style="background:#00d4c8"></div><div class="sb" style="background:#00d4c8"></div><div class="sb" style="background:#00d4c8;height:12px"></div><div class="sb" style="background:#00d4c8;height:12px"></div></div>
+          <div class="wm"><span>Lauren McDonald · learningcraftai.com · Lauren McDonald · learningcraftai.com</span></div>
+        </div>
+      </div>
+      <h3 class="c-title">Contributor Onboarding Playbook</h3>
+      <p class="c-desc">A structured week-by-week program guide for AI contributor onboarding — milestones, benchmarks, roles, and escalation design.</p>
+      <div class="c-tags"><span class="c-tag">Onboarding</span><span class="c-tag">Program Design</span><span class="c-tag">AI Programs</span></div>
+      <div class="c-arrow">Read Full Sample <span>→</span></div>
+    </a>
+
+    <!-- Card 2 -->
+    <a href="#rubric" class="w-card violet fu">
+      <div class="c-type violet"><span class="c-dot"></span>Sample Framework</div>
+      <div class="c-thumb">
+        <div class="sp" style="background:linear-gradient(135deg,#0f0a1e,#0a0f1e)">
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:#7c6af7;letter-spacing:.1em;margin-bottom:.5rem">EVALUATION RUBRIC FRAMEWORK</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;margin-bottom:.5rem">
+              <div style="background:rgba(124,106,247,.14);border:1px solid rgba(124,106,247,.22);padding:.25rem;font-size:.48rem;color:#7c6af7;font-family:'DM Mono',monospace;text-align:center">ACCURACY</div>
+              <div style="background:rgba(124,106,247,.14);border:1px solid rgba(124,106,247,.22);padding:.25rem;font-size:.48rem;color:#7c6af7;font-family:'DM Mono',monospace;text-align:center">CLARITY</div>
+              <div style="background:rgba(124,106,247,.14);border:1px solid rgba(124,106,247,.22);padding:.25rem;font-size:.48rem;color:#7c6af7;font-family:'DM Mono',monospace;text-align:center">SAFETY</div>
+            </div>
+            <div class="sl sl-l" style="background:#7c6af7"></div>
+            <div class="sl sl-m" style="background:#7c6af7;margin-top:.3rem"></div>
+          </div>
+          <div class="wm"><span>Lauren McDonald · learningcraftai.com · Lauren McDonald · learningcraftai.com</span></div>
+        </div>
+      </div>
+      <h3 class="c-title">AI Evaluation Rubric Framework</h3>
+      <p class="c-desc">Multi-dimension scoring rubric for RLHF and human evaluation — dimensions, anchor examples, calibration protocol, and common scoring errors.</p>
+      <div class="c-tags"><span class="c-tag">RLHF</span><span class="c-tag">Rubric Design</span><span class="c-tag">QA</span></div>
+      <div class="c-arrow">Read Full Sample <span>→</span></div>
+    </a>
+
+    <!-- Card 3 -->
+    <a href="#gap" class="w-card gold fu">
+      <div class="c-type gold"><span class="c-dot"></span>Visual Framework</div>
+      <div class="c-thumb">
+        <div class="sp" style="background:linear-gradient(135deg,#1a1200,#0f0e1a);padding:.9rem">
+          <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:#f5c842;letter-spacing:.1em;margin-bottom:.7rem">TRAINING GAP ANALYSIS</div>
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <div style="display:flex;align-items:center;gap:.5rem"><div style="font-size:.48rem;color:rgba(240,244,255,.4);width:50px;font-family:'DM Mono',monospace;flex-shrink:0">Current</div><div style="width:35%;height:5px;background:rgba(245,200,66,.3);border-radius:2px"></div></div>
+            <div style="display:flex;align-items:center;gap:.5rem"><div style="font-size:.48rem;color:rgba(240,244,255,.4);width:50px;font-family:'DM Mono',monospace;flex-shrink:0">Target</div><div style="width:78%;height:5px;background:rgba(245,200,66,.55);border-radius:2px"></div></div>
+            <div style="display:flex;align-items:center;gap:.5rem"><div style="font-size:.48rem;color:rgba(240,244,255,.4);width:50px;font-family:'DM Mono',monospace;flex-shrink:0">Gap</div><div style="width:43%;height:5px;background:#f5c842;border-radius:2px"></div></div>
+          </div>
+          <div class="wm"><span>Lauren McDonald · learningcraftai.com · Lauren McDonald · learningcraftai.com</span></div>
+        </div>
+      </div>
+      <h3 class="c-title">Training Gap Analysis Framework</h3>
+      <p class="c-desc">Structured methodology for identifying and prioritizing training gaps — current vs. target state mapping, root cause classification, and remediation roadmap.</p>
+      <div class="c-tags"><span class="c-tag">Needs Assessment</span><span class="c-tag">Gap Analysis</span><span class="c-tag">L&D Strategy</span></div>
+      <div class="c-arrow">Read Full Sample <span>→</span></div>
+    </a>
+
+    <!-- Card 4 -->
+    <a href="#sop" class="w-card fu">
+      <div class="c-type"><span class="c-dot"></span>Standard Operating Procedure</div>
+      <div class="c-thumb">
+        <div class="sp" style="background:linear-gradient(135deg,#0d1b2a,#0a1628);padding:.9rem">
+          <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:#00d4c8;letter-spacing:.1em;margin-bottom:.6rem">QA CALIBRATION SOP</div>
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:16px;height:16px;border-radius:50%;border:1px solid #00d4c8;display:flex;align-items:center;justify-content:center;font-size:.44rem;color:#00d4c8;font-family:'DM Mono',monospace;flex-shrink:0">1</div><div class="sl sl-l" style="background:#00d4c8;margin:0;flex:1"></div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,212,200,.4);display:flex;align-items:center;justify-content:center;font-size:.44rem;color:rgba(0,212,200,.6);font-family:'DM Mono',monospace;flex-shrink:0">2</div><div class="sl sl-m" style="background:rgba(0,212,200,.35);margin:0;flex:1"></div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,212,200,.22);display:flex;align-items:center;justify-content:center;font-size:.44rem;color:rgba(0,212,200,.35);font-family:'DM Mono',monospace;flex-shrink:0">3</div><div class="sl sl-s" style="background:rgba(0,212,200,.2);margin:0;flex:1"></div></div>
+          </div>
+          <div class="wm"><span>Lauren McDonald · learningcraftai.com · Lauren McDonald · learningcraftai.com</span></div>
+        </div>
+      </div>
+      <h3 class="c-title">QA Calibration SOP</h3>
+      <p class="c-desc">End-to-end SOP for running calibration sessions — session design, IRR tracking, facilitator checklist, and escalation protocol.</p>
+      <div class="c-tags"><span class="c-tag">QA Ops</span><span class="c-tag">Calibration</span><span class="c-tag">SOP</span></div>
+      <div class="c-arrow">Read Full Sample <span>→</span></div>
+    </a>
+
+    <!-- Card 5 — Platform -->
+    <a href="#platform" class="w-card gold fu">
+      <div class="c-type gold"><span class="c-dot"></span>Live Platform</div>
+      <div class="c-thumb">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1200,#0a0f1e);display:flex;align-items:center;justify-content:center;padding:1rem;position:relative">
+          <div style="text-align:center"><div style="font-size:1.3rem;margin-bottom:.35rem">🎮</div><div style="font-family:'DM Serif Display',serif;font-size:.88rem;color:#f5c842;margin-bottom:.2rem">Gamified AI Contributor Training</div><div style="font-size:.6rem;color:rgba(240,244,255,.38);font-family:'DM Mono',monospace;letter-spacing:.06em">XP · Badges · Streaks · Leaderboard</div></div>
+          <div style="position:absolute;bottom:.7rem;right:.9rem;font-family:'DM Mono',monospace;font-size:.56rem;color:rgba(245,200,66,.65);letter-spacing:.08em">LIVE ●</div>
+        </div>
+      </div>
+      <h3 class="c-title">Learning Craft AI — Course Platform</h3>
+      <p class="c-desc">A fully designed and deployed gamified learning platform — XP system, badge framework, admin course builder, and leaderboard, built from scratch.</p>
+      <div class="c-tags"><span class="c-tag">LMS Design</span><span class="c-tag">Gamification</span><span class="c-tag">Full Build</span></div>
+      <div class="c-arrow" style="color:var(--gold)">View Platform <span>→</span></div>
+    </a>
+
+    <!-- Card 6 — Consulting -->
+    <a href="https://learningcraftai.com" target="_blank" class="w-card violet fu">
+      <div class="c-type violet"><span class="c-dot"></span>Consulting Services</div>
+      <div class="c-thumb">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0f0a1e,#0a0f1e);display:flex;align-items:center;justify-content:center;padding:1.1rem">
+          <div style="width:100%">
+            <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:#7c6af7;letter-spacing:.1em;margin-bottom:.7rem">SERVICES OFFERED</div>
+            <div style="display:flex;flex-direction:column;gap:.38rem">
+              <div style="font-size:.66rem;color:rgba(240,244,255,.68);padding-left:.55rem;border-left:2px solid rgba(124,106,247,.45)">Training Infrastructure Audit</div>
+              <div style="font-size:.66rem;color:rgba(240,244,255,.68);padding-left:.55rem;border-left:2px solid rgba(124,106,247,.45)">Contributor Onboarding Program Design</div>
+              <div style="font-size:.66rem;color:rgba(240,244,255,.68);padding-left:.55rem;border-left:2px solid rgba(124,106,247,.45)">Evaluation Framework &amp; Rubric Design</div>
+              <div style="font-size:.66rem;color:rgba(240,244,255,.68);padding-left:.55rem;border-left:2px solid rgba(124,106,247,.45)">QA Framework &amp; Calibration Systems</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 class="c-title">B2B Consulting — Learning Craft AI</h3>
+      <p class="c-desc">Strategic and hands-on consulting for organizations building AI contributor programs — from audits to full program builds.</p>
+      <div class="c-tags"><span class="c-tag">Consulting</span><span class="c-tag">B2B</span><span class="c-tag">AI Programs</span></div>
+      <div class="c-arrow" style="color:var(--violet)">View Services <span>→</span></div>
+    </a>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ ONBOARDING PLAYBOOK ═══ -->
+<div class="doc-section" id="onboarding">
+  <div class="doc-wrap">
+    <div class="doc-lbl">Sample Document</div>
+    <h2 class="doc-title fu">Contributor Onboarding Playbook</h2>
+    <p class="doc-subtitle fu">A structured week-by-week guide for onboarding contributors to AI data programs — covering orientation, workflow training, quality benchmarks, and milestone checkpoints.</p>
+    <div class="wm-badge">⬡ &nbsp;Watermarked sample · Lauren McDonald · learningcraftai.com</div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Purpose &amp; Scope</div>
+      <p class="d-body">This playbook supports consistent, scalable onboarding for contributors joining AI data programs. It provides a structured pathway from day-one orientation through full independent performance, with clear milestone checkpoints and quality expectations at each stage. It is intended for program managers, operations leads, and instructional designers responsible for contributor ramp-up.</p>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Program Overview</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem">
+        <div class="d-card"><div class="d-card-title">Duration</div><div class="d-card-body">4-week structured pathway with optional extension for complex task types</div></div>
+        <div class="d-card gold"><div class="d-card-title">Delivery</div><div class="d-card-body">Blended: async eLearning + live calibration sessions + on-the-job practice</div></div>
+        <div class="d-card violet"><div class="d-card-title">Audience</div><div class="d-card-body">New contributors joining RLHF, annotation, or human evaluation programs</div></div>
+      </div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Week-by-Week Pathway</div>
+      <div class="d-card" style="margin-bottom:.8rem">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem"><div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--cyan);letter-spacing:.1em;background:var(--cyan-glow);border:1px solid var(--border);padding:.18rem .65rem;border-radius:2px">WEEK 1</div><div class="d-card-title" style="margin:0">Orientation &amp; Program Foundations</div></div>
+        <p class="d-card-body" style="margin-bottom:.7rem">Platform orientation, program documentation review, introduction to core task types. Focus on understanding why evaluation work matters and how contributor quality connects to model performance.</p>
+        <div><span class="tag c">Platform walkthrough</span><span class="tag c">Role expectations</span><span class="tag c">Task type introduction</span><span class="tag c">Documentation review</span></div>
+      </div>
+      <div class="d-card gold" style="margin-bottom:.8rem">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem"><div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--gold);letter-spacing:.1em;background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.2);padding:.18rem .65rem;border-radius:2px">WEEK 2</div><div class="d-card-title" style="margin:0">Rubric Training &amp; Calibration</div></div>
+        <p class="d-card-body" style="margin-bottom:.7rem">In-depth rubric training with anchor examples and practice sets. Live calibration sessions to align scoring understanding and establish inter-rater reliability baselines.</p>
+        <div><span class="tag g">Rubric deep-dive</span><span class="tag g">Anchor examples</span><span class="tag g">Practice scoring sets</span><span class="tag g">Live calibration session</span></div>
+      </div>
+      <div class="d-card violet" style="margin-bottom:.8rem">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem"><div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--violet);letter-spacing:.1em;background:rgba(124,106,247,.06);border:1px solid rgba(124,106,247,.2);padding:.18rem .65rem;border-radius:2px">WEEK 3</div><div class="d-card-title" style="margin:0">Supervised Practice &amp; Feedback Loops</div></div>
+        <p class="d-card-body" style="margin-bottom:.7rem">Live task work under supervised conditions. Individual feedback focused on error patterns, quality consistency, and escalation behavior.</p>
+        <div><span class="tag v">Supervised task work</span><span class="tag v">Individual feedback</span><span class="tag v">Error pattern review</span><span class="tag v">Escalation training</span></div>
+      </div>
+      <div class="d-card">
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem"><div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--cyan);letter-spacing:.1em;background:var(--cyan-glow);border:1px solid var(--border);padding:.18rem .65rem;border-radius:2px">WEEK 4</div><div class="d-card-title" style="margin:0">Independent Performance &amp; Milestone Review</div></div>
+        <p class="d-card-body" style="margin-bottom:.7rem">Independent work against SLA and quality benchmarks. Formal milestone review at end of Week 4. Contributors who don't meet benchmarks receive a targeted remediation plan.</p>
+        <div><span class="tag c">Independent execution</span><span class="tag c">SLA benchmarks</span><span class="tag c">Milestone review</span><span class="tag c">Remediation planning</span></div>
+      </div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Milestone Benchmarks</div>
+      <table class="d-table">
+        <thead><tr><th>Milestone</th><th>Timing</th><th>Success Criteria</th><th>If Not Met</th></tr></thead>
+        <tbody>
+          <tr><td>Platform &amp; orientation complete</td><td>End of Week 1</td><td>100% module completion and documentation review</td><td>Extended access + manager check-in</td></tr>
+          <tr><td>Rubric calibration baseline</td><td>End of Week 2</td><td>IRR ≥ 0.70 on practice sets; live calibration attendance</td><td>Additional practice + 1:1 rubric coaching</td></tr>
+          <tr><td>Supervised practice quality gate</td><td>Mid Week 3</td><td>Quality score ≥ threshold; error rate below program limit</td><td>Targeted feedback loop + supervised extension</td></tr>
+          <tr><td>Independent readiness review</td><td>End of Week 4</td><td>Sustained quality and throughput at benchmarks over 5-day window</td><td>Formal remediation plan with defined timeline</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Escalation &amp; Edge Case Handling</div>
+      <p class="d-body">Contributors should be trained on when and how to escalate. Clear escalation paths reduce inconsistent decision-making and help capture edge cases that improve rubric documentation over time.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem">
+        <div class="d-card"><div class="d-card-title">Escalate When</div><div class="d-card-body">Task falls outside rubric scope · Conflicting guidance in documentation · Safety or policy concern · Prompt or response cannot be scored confidently</div></div>
+        <div class="d-card gold"><div class="d-card-title">Do Not Guess</div><div class="d-card-body">Guessing on ambiguous tasks during onboarding inflates error rates and skews calibration data. When in doubt — flag it and escalate through the designated channel.</div></div>
+      </div>
+    </div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ EVALUATION RUBRIC ═══ -->
+<div class="doc-section dark" id="rubric">
+  <div class="doc-wrap wide">
+    <div class="doc-lbl">Sample Framework</div>
+    <h2 class="doc-title fu">AI Evaluation Rubric Framework</h2>
+    <p class="doc-subtitle fu">A multi-dimension scoring framework for RLHF and human evaluation — dimensions, scoring scale, anchor examples, calibration protocol, and common errors.</p>
+    <div class="wm-badge">⬡ &nbsp;Watermarked sample · Lauren McDonald · learningcraftai.com</div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Scoring Dimensions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem">
+        <div class="d-card"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:.4rem">01</div><div class="d-card-title">Accuracy &amp; Factual Correctness</div><div class="d-card-body">Claims verifiable, free of hallucination, no uncertain information presented as fact.</div></div>
+        <div class="d-card violet"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--violet);letter-spacing:.1em;margin-bottom:.4rem">02</div><div class="d-card-title">Clarity &amp; Coherence</div><div class="d-card-body">Clearly written, logically organized, directly addresses the prompt, free of contradictions.</div></div>
+        <div class="d-card gold"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--gold);letter-spacing:.1em;margin-bottom:.4rem">03</div><div class="d-card-title">Safety &amp; Harmlessness</div><div class="d-card-body">Avoids harmful content, handles sensitive topics appropriately, passes reasonable person test.</div></div>
+        <div class="d-card"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:.4rem">04</div><div class="d-card-title">Instruction Following</div><div class="d-card-body">Follows explicit and implicit instructions; format, length, and tone match the request.</div></div>
+        <div class="d-card violet"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--violet);letter-spacing:.1em;margin-bottom:.4rem">05</div><div class="d-card-title">Helpfulness &amp; Completeness</div><div class="d-card-body">Genuinely helps the user accomplish their goal; complete but not padded.</div></div>
+        <div class="d-card gold"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--gold);letter-spacing:.1em;margin-bottom:.4rem">06</div><div class="d-card-title">Honesty &amp; Calibration</div><div class="d-card-body">Expresses appropriate uncertainty; avoids overclaiming; acknowledges limitations without over-hedging.</div></div>
+      </div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Scoring Scale</div>
+      <table class="d-table">
+        <thead><tr><th>Score</th><th>Label</th><th>Definition</th><th>When to Use</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--cyan);font-weight:500">4</td><td style="font-weight:500">Excellent</td><td>Fully meets expectations with no meaningful weaknesses</td><td>You would not change anything about this aspect</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:1rem;color:rgba(0,212,200,.65)">3</td><td style="font-weight:500">Good</td><td>Mostly meets expectations; minor issues that don't significantly impact quality</td><td>Small improvements possible but response is generally solid</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--gold)">2</td><td style="font-weight:500">Fair</td><td>Partially meets expectations; noticeable weaknesses affect usefulness</td><td>Clear problems but still contains something valuable</td></tr>
+          <tr><td style="font-family:'DM Mono',monospace;font-size:1rem;color:#e05555">1</td><td style="font-weight:500">Poor</td><td>Fails to meet expectations; significant problems present</td><td>Wrong, harmful, incoherent, or completely misses the mark</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Anchor Examples — Accuracy Dimension</div>
+      <div style="display:flex;flex-direction:column;gap:.8rem">
+        <div class="d-card"><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem"><div style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--cyan);font-weight:500">Score 4</div><div style="font-size:.72rem;color:var(--muted)">No factual issues</div></div><div class="d-card-body">"Correctly identifies the capital, gives an accurate population figure within accepted range, and appropriately notes the figure is approximate. No hallucinated claims or false certainty."</div></div>
+        <div class="d-card gold"><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem"><div style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--gold);font-weight:500">Score 2</div><div style="font-size:.72rem;color:var(--muted)">Contains a factual error</div></div><div class="d-card-body">"Gives the correct capital but states population as 8 million when the accepted figure is ~14 million. One significant factual error that would mislead the user."</div></div>
+        <div class="d-card red"><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem"><div style="font-family:'DM Mono',monospace;font-size:.78rem;color:#e05555;font-weight:500">Score 1</div><div style="font-size:.72rem;color:var(--muted)">Multiple errors / hallucination</div></div><div class="d-card-body">"Names an incorrect capital city and presents fabricated historical claims as fact. Multiple significant errors that fundamentally undermine the response."</div></div>
+      </div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Common Scoring Errors to Avoid</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem">
+        <div class="d-card"><div class="d-card-title">Central Tendency Bias</div><div class="d-card-body">Avoiding extreme scores even when warranted. If a response is truly excellent or truly poor, score it as such.</div></div>
+        <div class="d-card violet"><div class="d-card-title">Halo Effect</div><div class="d-card-body">Letting a high score on one dimension inflate scores on others. Each dimension must be scored independently.</div></div>
+        <div class="d-card gold"><div class="d-card-title">Recency Bias</div><div class="d-card-body">Over-weighting the end of a long response. Evaluate the full response — not just what you read last.</div></div>
+        <div class="d-card"><div class="d-card-title">Conflating Dimensions</div><div class="d-card-body">Scoring Clarity based on Helpfulness or vice versa. Use each dimension's specific definition — don't blend them.</div></div>
+      </div>
+    </div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ GAP ANALYSIS ═══ -->
+<div class="doc-section" id="gap">
+  <div class="doc-wrap wide">
+    <div class="doc-lbl">Visual Framework</div>
+    <h2 class="doc-title fu">Training Gap Analysis Framework</h2>
+    <p class="doc-subtitle fu">A structured methodology for identifying, mapping, and prioritizing training gaps — from data collection through remediation planning.</p>
+    <div class="wm-badge">⬡ &nbsp;Watermarked sample · Lauren McDonald · learningcraftai.com</div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Process Phases</div>
+      <div class="step-row"><div class="step-n">01</div><div><div class="step-title">Define the Target State</div><div class="step-body">Document performance expectations, quality benchmarks, and behavioral standards contributors are expected to meet. Programs without a clearly defined target — that is itself a finding worth surfacing.</div></div></div>
+      <div class="step-row"><div class="step-n" style="border-color:var(--gold);color:var(--gold)">02</div><div><div class="step-title">Collect Current State Data</div><div class="step-body">Gather quality scores, throughput data, error logs, calibration results, and direct observation. For programs with existing training, audit current materials to assess coverage and relevance.</div></div></div>
+      <div class="step-row"><div class="step-n" style="border-color:var(--violet);color:var(--violet)">03</div><div><div class="step-title">Map the Gaps</div><div class="step-body">Compare current vs. target and categorize each gap: knowledge gap, skill gap, process gap, or system gap. The right intervention depends on root cause — not just symptom.</div></div></div>
+      <div class="step-row"><div class="step-n">04</div><div><div class="step-title">Prioritize &amp; Plan Remediation</div><div class="step-body">Weight by impact on program quality, frequency, and feasibility. Output is a sequenced roadmap — not a list of everything that needs to change.</div></div></div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Sample Gap Visualization — Illustrative</div>
+      <p class="d-body" style="margin-bottom:1.8rem">Current performance vs. target benchmarks across five quality dimensions. Gap size and impact drive prioritization order.</p>
+      <div style="margin-bottom:.35rem;display:grid;grid-template-columns:150px 1fr 52px;gap:.9rem"><div></div><div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted)"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><div></div></div>
+      <div class="gap-row"><div class="gap-lbl">Rubric Accuracy</div><div class="gap-track"><div class="gap-fill" style="width:82%;background:linear-gradient(90deg,var(--cyan),rgba(0,212,200,.55))"></div></div><div class="gap-pct" style="color:var(--cyan)">82%</div></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);padding-left:159px;margin-bottom:.9rem">Gap to target (90%): <span style="color:#e05555">8 pts</span> · Priority: High</div>
+      <div class="gap-row"><div class="gap-lbl">Escalation Behavior</div><div class="gap-track"><div class="gap-fill" style="width:61%;background:linear-gradient(90deg,var(--gold),rgba(245,200,66,.5))"></div></div><div class="gap-pct" style="color:var(--gold)">61%</div></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);padding-left:159px;margin-bottom:.9rem">Gap to target (85%): <span style="color:#e05555">24 pts</span> · Priority: Critical</div>
+      <div class="gap-row"><div class="gap-lbl">Throughput Rate</div><div class="gap-track"><div class="gap-fill" style="width:78%;background:linear-gradient(90deg,var(--violet),rgba(124,106,247,.5))"></div></div><div class="gap-pct" style="color:var(--violet)">78%</div></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);padding-left:159px;margin-bottom:.9rem">Gap to target (85%): <span style="color:var(--gold)">7 pts</span> · Priority: Medium</div>
+      <div class="gap-row"><div class="gap-lbl">Calibration IRR</div><div class="gap-track"><div class="gap-fill" style="width:91%;background:linear-gradient(90deg,var(--cyan),rgba(0,212,200,.65))"></div></div><div class="gap-pct" style="color:var(--cyan)">91%</div></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);padding-left:159px;margin-bottom:.9rem">At or above target (88%): <span style="color:var(--cyan)">No gap</span> · Monitor only</div>
+      <div class="gap-row"><div class="gap-lbl">Edge Case Handling</div><div class="gap-track"><div class="gap-fill" style="width:54%;background:linear-gradient(90deg,#e05555,rgba(224,85,85,.5))"></div></div><div class="gap-pct" style="color:#e05555">54%</div></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);padding-left:159px;margin-bottom:1.8rem">Gap to target (80%): <span style="color:#e05555">26 pts</span> · Priority: Critical</div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Remediation Prioritization Matrix</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem">
+        <div class="d-card red"><div class="d-card-title" style="color:#e05555">P1 — Critical: Edge Case Handling</div><div class="d-card-body">Largest gap, high impact on quality. Intervention: new training module + rubric addendum with dedicated edge case examples. Target: 2-week rollout.</div></div>
+        <div class="d-card red"><div class="d-card-title" style="color:#e05555">P2 — Critical: Escalation Behavior</div><div class="d-card-body">24-point gap. Root cause: unclear escalation criteria, not a training failure. Intervention: revised SOPs + live calibration on escalation scenarios.</div></div>
+        <div class="d-card gold"><div class="d-card-title" style="color:var(--gold)">P3 — High: Rubric Accuracy</div><div class="d-card-body">8-point gap. Intervention: updated anchor examples for top two error dimensions + re-calibration session. Target: within current sprint.</div></div>
+        <div class="d-card violet"><div class="d-card-title" style="color:var(--violet)">P4 — Medium: Throughput Rate</div><div class="d-card-body">7-point gap. Likely a process issue, not a training gap. Audit the workflow before building new content. Monitor for 2 weeks first.</div></div>
+      </div>
+    </div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ QA CALIBRATION SOP ═══ -->
+<div class="doc-section dark" id="sop">
+  <div class="doc-wrap">
+    <div class="doc-lbl">Standard Operating Procedure</div>
+    <h2 class="doc-title fu">QA Calibration SOP</h2>
+    <p class="doc-subtitle fu">End-to-end SOP for running calibration sessions — session design, IRR tracking, facilitator checklist, and escalation protocol for AI evaluation programs.</p>
+    <div class="wm-badge">⬡ &nbsp;Watermarked sample · Lauren McDonald · learningcraftai.com</div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Purpose</div>
+      <p class="d-body">Calibration ensures contributors are interpreting and applying rubrics consistently. Without it, scoring drift occurs — reviewers develop slightly different mental models of what a score means, and inter-rater reliability declines. This SOP defines how sessions should be structured, run, and documented.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-top:1.2rem">
+        <div class="d-card"><div class="d-card-title">Primary Goal</div><div class="d-card-body">Align contributor scoring to program standards; reduce variance across the team</div></div>
+        <div class="d-card violet"><div class="d-card-title">Secondary Goal</div><div class="d-card-body">Identify rubric weaknesses, edge cases, and documentation gaps</div></div>
+        <div class="d-card gold"><div class="d-card-title">Tertiary Goal</div><div class="d-card-body">Build shared scoring vocabulary and culture across the contributor team</div></div>
+      </div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Session Types</div>
+      <table class="d-table">
+        <thead><tr><th>Type</th><th>Audience</th><th>Frequency</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500">Onboarding Calibration</td><td>All new contributors before independent work begins</td><td>Once, during Week 2</td><td>60–90 min</td></tr>
+          <tr><td style="font-weight:500">Ongoing Calibration</td><td>Active contributors on all programs</td><td>Weekly or biweekly</td><td>30–45 min</td></tr>
+          <tr><td style="font-weight:500">Drift Correction</td><td>Contributors flagged for IRR below threshold</td><td>Within 5 business days of flag</td><td>30 min 1:1</td></tr>
+          <tr><td style="font-weight:500">Rubric Update Calibration</td><td>All active contributors on rubric change</td><td>Within 48 hrs of update</td><td>45–60 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Session Format — Step by Step</div>
+      <div class="step-row"><div class="step-n">1</div><div><div class="step-title">Pre-Session Material Distribution (24 hrs before)</div><div class="step-body">Distribute 10–15 tasks to all participants. Contributors score independently without discussion and submit scores before the session. This prevents anchoring bias during group discussion.</div></div></div>
+      <div class="step-row"><div class="step-n">2</div><div><div class="step-title">Opening Review (5 min)</div><div class="step-body">Share IRR data from submitted scores. Identify high-agreement items (skip) and divergent items (discuss). Do not reveal gold standard scores yet.</div></div></div>
+      <div class="step-row"><div class="step-n">3</div><div><div class="step-title">Structured Discussion of Divergent Items (20–30 min)</div><div class="step-body">Work through divergent items. Ask contributors to explain their reasoning — not just their score. Surface different rubric interpretations. Facilitator records key disagreements and resolutions.</div></div></div>
+      <div class="step-row"><div class="step-n">4</div><div><div class="step-title">Gold Standard Reveal &amp; Alignment (10 min)</div><div class="step-body">Share gold standard scores and rationale. If group consensus differs from gold standard in a reasonable way, flag for rubric documentation review — don't dismiss the alternative reasoning.</div></div></div>
+      <div class="step-row"><div class="step-n">5</div><div><div class="step-title">Documentation &amp; Action Items (5 min)</div><div class="step-body">Document: date, attendees, pre/post IRR, rubric gaps surfaced, and action items. This feeds directly into training material iteration.</div></div></div>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">IRR Thresholds &amp; Actions</div>
+      <table class="d-table">
+        <thead><tr><th>Level</th><th>Threshold</th><th>Action if Below</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500">Cohort</td><td style="font-family:'DM Mono',monospace;color:var(--cyan)">≥ 0.75</td><td>Run additional session within the week; review rubric for clarity issues</td></tr>
+          <tr><td style="font-weight:500">Individual contributor</td><td style="font-family:'DM Mono',monospace;color:var(--cyan)">≥ 0.70</td><td>Schedule 1:1 drift correction; provide targeted anchor examples for divergent dimensions</td></tr>
+          <tr><td style="font-weight:500">Individual — repeated failure</td><td style="font-family:'DM Mono',monospace;color:var(--gold)">2 sessions below 0.65</td><td>Escalate to program manager; suspend independent access pending remediation plan</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-sec fu">
+      <div class="d-sec-label">Facilitator Pre-Session Checklist</div>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Calibration set prepared with 10–15 items covering all major task types</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Gold standard scores and rationale prepared for each item</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Pre-session materials distributed 24 hours in advance</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Score collection mechanism in place</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">IRR calculated from submitted scores before session begins</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Documentation template ready for notes and action items</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Rubric gap log available to capture new issues</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-txt">Escalation path confirmed for edge cases that may arise</div></div>
+      </div>
+    </div>
+    <div style="padding-top:.9rem;border-top:1px solid var(--border)"><p style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.07em">Sample · Lauren McDonald · learningcraftai.com · Not for redistribution</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ PLATFORM ═══ -->
+<div class="platform-section" id="platform">
+  <div class="platform-grid">
+    <div class="platform-left">
+      <div class="doc-lbl">Live Platform</div>
+      <h2 class="s-title fu">Learning Craft AI<br>Course Platform</h2>
+      <p class="d-body fu">A fully designed and deployed gamified learning platform built from scratch — demonstrating instructional design principles inside a real, working system.</p>
+      <div class="platform-features fu">
+        <div class="pf-item"><div class="pf-icon">⚡</div><div class="pf-text">XP and leveling system — contributors earn points for completing lessons and passing knowledge checks</div></div>
+        <div class="pf-item"><div class="pf-icon">🏆</div><div class="pf-text">Badge framework and leaderboard — gamified recognition that drives engagement and retention</div></div>
+        <div class="pf-item"><div class="pf-icon">🔥</div><div class="pf-text">Streak tracking — behavioral design that reinforces consistent daily learning habits</div></div>
+        <div class="pf-item"><div class="pf-icon">⚙️</div><div class="pf-text">Admin course builder — full content management with lesson editor, knowledge checks, and publishing controls</div></div>
+      </div>
+      <div style="display:flex;gap:.9rem;flex-wrap:wrap" class="fu">
+        <a href="https://courses.learningcraftai.com" target="_blank" class="btn-p">Launch Platform →</a>
+        <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);letter-spacing:.06em;display:flex;align-items:center;line-height:1.5">Demo login:<br>demo@learningcraftai.com<br>/ lcaidemo2026</div>
+      </div>
+    </div>
+    <div class="platform-right fu">
+      <div class="platform-screen">
+        <div class="ps-header">
+          <div class="ps-logo">Learning Craft AI</div>
+          <div class="ps-live">LIVE</div>
+        </div>
+        <div class="ps-stats">
+          <div class="ps-stat"><div class="ps-stat-val">0</div><div class="ps-stat-lbl">Total XP</div></div>
+          <div class="ps-stat"><div class="ps-stat-val">0%</div><div class="ps-stat-lbl">Complete</div></div>
+          <div class="ps-stat"><div class="ps-stat-val">1</div><div class="ps-stat-lbl">Day Streak</div></div>
+          <div class="ps-stat"><div class="ps-stat-val">0</div><div class="ps-stat-lbl">Badges</div></div>
+        </div>
+        <div class="ps-course">
+          <div class="ps-course-title">AI Contributor Training: Sample Module</div>
+          <div class="ps-course-sub">3 lessons · Start anytime · Free preview</div>
+          <div class="ps-lessons">
+            <div class="ps-lesson">What Is RLHF and Why It Depends on You</div>
+            <div class="ps-lesson">Evaluating Responses — What Good Looks Like</div>
+            <div class="ps-lesson">Knowledge Check</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ABOUT STRIP ═══ -->
+<div class="about-strip">
+  <div style="flex:1">
+    <div class="about-quote fu">"I don't design training in the abstract — I design it around how AI programs actually run."</div>
+    <div class="about-attr">— Lauren McDonald · Founder, Learning Craft AI</div>
+  </div>
+  <div class="about-links fu">
+    <a href="https://learningcraftai.com" target="_blank" class="a-link"><div class="a-icon">◈</div>learningcraftai.com</a>
+    <a href="https://courses.learningcraftai.com" target="_blank" class="a-link"><div class="a-icon">✦</div>courses.learningcraftai.com</a>
+    <a href="https://linkedin.com/in/lauren-mcdonald-8460b712a" target="_blank" class="a-link"><div class="a-icon">in</div>LinkedIn</a>
+  </div>
+</div>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="s-label">Get In Touch</div>
+  <h2 class="cta-title fu">Looking for someone who can build and run it?</h2>
+  <p class="cta-sub fu">Whether you're hiring or need a consulting partner for your AI training program — let's talk.</p>
+  <div class="cta-actions fu">
+    <a href="https://learningcraftai.com/contact" target="_blank" class="btn-p">Work With Me →</a>
+    <a href="https://linkedin.com/in/lauren-mcdonald-8460b712a" target="_blank" class="btn-g">View LinkedIn</a>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">Lauren McDonald · AI Workforce &amp; Learning Design</div>
+  <div class="f-copy">© 2026 Lauren McDonald. All rights reserved.</div>
+  <ul class="f-links">
+    <li><a href="https://learningcraftai.com" target="_blank">Learning Craft AI</a></li>
+    <li><a href="https://learningcraftai.com/contact" target="_blank">Contact</a></li>
+  </ul>
+</footer>
+
+</div><!-- /main -->
+
+<script>
+const PW = "LaurenID2026";
+
+function unlock() {
+  const v = document.getElementById('pw').value;
+  const err = document.getElementById('pw-err');
+  const field = document.getElementById('pw');
+  if (v === PW) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    sessionStorage.setItem('lm_auth','1');
+    initObserver();
+  } else {
+    field.classList.add('err');
+    err.style.display = 'block';
+    setTimeout(() => field.classList.remove('err'), 400);
+  }
+}
+
+document.getElementById('pw').addEventListener('keydown', e => { if(e.key==='Enter') unlock(); });
+
+if (sessionStorage.getItem('lm_auth')==='1') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+  setTimeout(initObserver, 50);
+}
+
+function initObserver() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('vis'), (e.target.dataset.d||0));
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold:.08});
+  document.querySelectorAll('.fu').forEach((el,i) => {
+    el.dataset.d = (i%4)*70;
+    obs.observe(el);
+  });
+}
+</script>
+</body>
+</html>
