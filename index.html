@@ -25,24 +25,8 @@
 html{scroll-behavior:smooth;}
 body{background:var(--navy);color:var(--white);font-family:'Outfit',sans-serif;font-weight:300;overflow-x:hidden;}
 
-/* ── GATE ── */
-#gate{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;}
-.gate-inner{width:100%;max-width:400px;padding:2rem;text-align:center;}
-.gate-eyebrow{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--cyan);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.8rem;}
-.gate-title{font-family:'DM Serif Display',serif;font-size:2rem;font-weight:400;margin-bottom:0.6rem;}
-.gate-sub{font-size:0.85rem;color:var(--muted);line-height:1.65;margin-bottom:2rem;}
-.gate-field{width:100%;background:var(--navy-3);border:1px solid var(--border);border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:0.9rem;letter-spacing:0.1em;padding:0.85rem 1.2rem;margin-bottom:0.7rem;text-align:center;outline:none;transition:border-color .2s;}
-.gate-field:focus{border-color:var(--cyan);}
-.gate-field.err{border-color:#e05555;animation:shake .3s;}
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px)};}
-.gate-err{font-family:'DM Mono',monospace;font-size:0.67rem;color:#e05555;letter-spacing:.06em;margin-bottom:.7rem;display:none;}
-.gate-btn{width:100%;background:var(--cyan);color:var(--navy);font-weight:600;font-size:.85rem;letter-spacing:.07em;padding:.85rem;border:none;border-radius:2px;cursor:pointer;transition:opacity .2s;}
-.gate-btn:hover{opacity:.85;}
-.gate-note{font-size:.72rem;color:var(--muted);margin-top:1.8rem;}
-.gate-note a{color:var(--cyan);text-decoration:none;}
-
 /* ── MAIN ── */
-#main{display:none;}
+#main{display:block;}
 
 /* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;background:rgba(10,15,30,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
@@ -230,10 +214,13 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
 .fu.vis{opacity:1;transform:translateY(0);}
 
 /* ── RESPONSIVE ── */
+/* ── VIDEO GRID ── */
+.lesson-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
 @media(max-width:900px){
   .work-grid{grid-template-columns:1fr 1fr;}
   .platform-grid{grid-template-columns:1fr;}
   .checklist{grid-template-columns:1fr;}
+  .lesson-grid{grid-template-columns:1fr;}
 }
 .hero-photo{display:none;}
 @media(max-width:900px){.hero-photo img{width:260px;height:260px;}}
@@ -253,19 +240,6 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
 </style>
 </head>
 <body>
-
-<!-- ═══ GATE ═══ -->
-<div id="gate">
-  <div class="gate-inner">
-    <div class="gate-eyebrow">Lauren McDonald · Portfolio</div>
-    <h1 class="gate-title">Private Access</h1>
-    <p class="gate-sub">This portfolio is shared by invitation. Enter the password provided by Lauren to view her work.</p>
-    <input type="password" class="gate-field" id="pw" placeholder="Enter password" />
-    <div class="gate-err" id="pw-err">Incorrect password try again.</div>
-    <button class="gate-btn" onclick="unlock()">Enter →</button>
-    <p class="gate-note">Don't have access? <a href="https://learningcraftai.com/contact" target="_blank">Request it here</a></p>
-  </div>
-</div>
 
 <!-- ═══ MAIN ═══ -->
 <div id="main">
@@ -317,6 +291,19 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
     <div><div class="stat-num">3+</div><div class="stat-lbl">Years in AI L&amp;D</div></div>
     <div><div class="stat-num">5+</div><div class="stat-lbl">Concurrent Programs</div></div>
     
+  </div>
+</section>
+
+
+<!-- ═══ INTRO VIDEO ═══ -->
+<section style="padding:6rem 3rem;background:var(--navy-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="s-label fu">In My Own Words</div>
+    <h2 class="s-title fu" style="margin-bottom:.7rem;">Hear it<br><em style="color:var(--cyan);font-style:italic;">straight from me.</em></h2>
+    <p class="d-body fu" style="max-width:560px;margin-bottom:2rem;">A quick intro to who I am, how I think about AI learning design, and what I actually do inside these programs.</p>
+    <div class="fu" style="position:relative;width:100%;aspect-ratio:16/9;border-radius:4px;overflow:hidden;border:1px solid var(--border);box-shadow:0 0 60px rgba(0,212,200,0.06),0 24px 64px rgba(0,0,0,0.4);">
+      <iframe src="https://app.heygen.com/embeds/70e0d80b544f440696bf5d58844721dd" title="Lauren McDonald — Introduction" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>
+    </div>
   </div>
 </section>
 
@@ -916,6 +903,27 @@ footer{padding:1.8rem 3rem;border-top:1px solid var(--border);display:flex;align
       </div>
     </div>
 
+    <!-- LESSON VIDEO SAMPLES -->
+    <div class="fu" style="margin-bottom:2.5rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:.67rem;color:var(--cyan);letter-spacing:.14em;text-transform:uppercase;padding-bottom:.5rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;">Course Content Samples</div>
+      <div class="lesson-grid">
+        <div>
+          <div style="font-size:.78rem;font-weight:500;margin-bottom:.5rem;color:var(--white);">What Is a Language Model?</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-bottom:.65rem;">Module 1 · Lesson 1</div>
+          <div style="position:relative;aspect-ratio:16/9;border-radius:3px;overflow:hidden;border:1px solid var(--border);">
+            <iframe src="https://app.heygen.com/embeds/f19ba0df3bdf45fd85adf81e6af2edb9" title="What Is a Language Model?" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.78rem;font-weight:500;margin-bottom:.5rem;color:var(--white);">How AI Models Learn: RLHF Explained</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-bottom:.65rem;">Module 1 · Lesson 2</div>
+          <div style="position:relative;aspect-ratio:16/9;border-radius:3px;overflow:hidden;border:1px solid var(--border);">
+            <iframe src="https://app.heygen.com/embeds/954111c182e840679537666ce7a08894" title="How AI Models Learn: RLHF Explained" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- FEATURES + CTA -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;" class="fu">
       <div>
@@ -980,9 +988,6 @@ function setSlide(i) {
 </div><!-- /main -->
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// No password gate
-document.getElementById('gate').style.display = 'none';
-document.getElementById('main').style.display = 'block';
 initObserver();
 
 function initObserver() {
