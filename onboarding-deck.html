@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Team Member Onboarding — Lauren McDonald</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0a0f1e;
+    --navy-2: #0d1426;
+    --navy-3: #111827;
+    --navy-4: #0f1520;
+    --cyan:   #00d4c8;
+    --gold:   #f5c842;
+    --violet: #7c6af7;
+    --white:  #f0f4ff;
+    --muted:  rgba(240,244,255,.52);
+    --border: rgba(240,244,255,.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--navy); color: var(--white); font-family: 'Outfit', sans-serif; overflow: hidden; }
+
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide { display: none; width: 100%; height: 100%; padding: 3.5rem 4.5rem; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+  .slide.active { display: flex; }
+  .slide::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 70% at 15% 15%, rgba(0,212,200,.05) 0%, transparent 60%); pointer-events: none; }
+
+  .slide-label { font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+  .slide-label.gold { color: var(--gold); }
+  .slide-label.violet { color: var(--violet); }
+  .slide-label::before { content: ''; width: 18px; height: 1px; background: currentColor; display: block; }
+
+  h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 400; line-height: 1.1; margin-bottom: 1.2rem; }
+  h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.6rem, 3.5vw, 2.6rem); font-weight: 400; line-height: 1.15; margin-bottom: 1rem; }
+  h3 { font-family: 'DM Serif Display', serif; font-size: clamp(1.1rem, 2.2vw, 1.6rem); font-weight: 400; margin-bottom: .6rem; }
+
+  .sub { font-size: clamp(.85rem, 1.5vw, 1rem); color: var(--muted); line-height: 1.75; max-width: 560px; }
+  .body { font-size: clamp(.82rem, 1.4vw, .95rem); color: rgba(240,244,255,.78); line-height: 1.8; }
+
+  em { color: var(--cyan); font-style: italic; }
+  em.gold { color: var(--gold); }
+  em.violet { color: var(--violet); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; width: 100%; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; width: 100%; }
+
+  .card { background: rgba(240,244,255,.04); border: 1px solid var(--border); border-radius: 3px; padding: 1.2rem 1.4rem; }
+  .card.cyan { border-left: 2px solid var(--cyan); }
+  .card.gold { border-left: 2px solid var(--gold); }
+  .card.violet { border-left: 2px solid var(--violet); }
+  .card-label { font-family: 'DM Mono', monospace; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+  .card-title { font-size: .9rem; font-weight: 500; margin-bottom: .35rem; }
+  .card-body { font-size: .78rem; color: var(--muted); line-height: 1.65; }
+
+  .list { display: flex; flex-direction: column; gap: .55rem; }
+  .list-item { display: flex; align-items: flex-start; gap: .75rem; font-size: clamp(.8rem, 1.3vw, .9rem); color: rgba(240,244,255,.78); line-height: 1.6; }
+  .bullet { flex-shrink: 0; font-family: 'DM Mono', monospace; color: var(--cyan); font-size: .8rem; padding-top: .1rem; }
+  .bullet.gold { color: var(--gold); }
+  .bullet.violet { color: var(--violet); }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; width: 100%; }
+  .timeline-row { display: grid; grid-template-columns: 90px 1fr; gap: 1.2rem; padding: .9rem 0; border-bottom: 1px solid var(--border); align-items: start; }
+  .timeline-row:last-child { border-bottom: none; }
+  .timeline-num { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--cyan); letter-spacing: .1em; text-transform: uppercase; padding-top: .15rem; }
+  .timeline-num.gold { color: var(--gold); }
+  .timeline-num.violet { color: var(--violet); }
+  .timeline-title { font-size: .88rem; font-weight: 500; margin-bottom: .2rem; }
+  .timeline-body { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+
+  .highlight-box { background: rgba(0,212,200,.06); border: 1px solid rgba(0,212,200,.2); border-radius: 4px; padding: 1.4rem 1.8rem; margin-top: 1.2rem; }
+  .highlight-box.gold { background: rgba(245,200,66,.06); border-color: rgba(245,200,66,.2); }
+  .highlight-box.violet { background: rgba(124,106,247,.06); border-color: rgba(124,106,247,.2); }
+
+  .big-stat { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--cyan); line-height: 1; margin-bottom: .3rem; }
+  .big-stat.gold { color: var(--gold); }
+  .stat-label { font-size: .78rem; color: var(--muted); font-family: 'DM Mono', monospace; letter-spacing: .06em; }
+
+  .tag { display: inline-flex; align-items: center; gap: .4rem; font-family: 'DM Mono', monospace; font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; padding: .3rem .75rem; border-radius: 2px; border: 1px solid var(--border); color: var(--muted); }
+  .tag.cyan { border-color: rgba(0,212,200,.3); color: var(--cyan); background: rgba(0,212,200,.06); }
+  .tag.gold { border-color: rgba(245,200,66,.3); color: var(--gold); background: rgba(245,200,66,.06); }
+
+  .step-row { display: grid; grid-template-columns: 36px 1fr; gap: 1rem; margin-bottom: 1.1rem; align-items: start; }
+  .step-n { font-family: 'DM Mono', monospace; font-size: .65rem; color: var(--navy); background: var(--cyan); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 500; margin-top: .1rem; }
+  .step-n.gold { background: var(--gold); }
+  .step-n.violet { background: var(--violet); }
+  .step-title { font-size: .88rem; font-weight: 500; margin-bottom: .2rem; }
+  .step-body { font-size: .78rem; color: var(--muted); line-height: 1.65; }
+
+  .divider { width: 48px; height: 1px; background: var(--cyan); margin: 1.2rem 0; }
+  .divider.gold { background: var(--gold); }
+
+  .slide-corner { position: absolute; top: 2rem; right: 3rem; font-family: 'DM Mono', monospace; font-size: .58rem; color: rgba(240,244,255,.2); letter-spacing: .1em; }
+
+  /* Nav */
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: rgba(10,15,30,.92); border-top: 1px solid var(--border); backdrop-filter: blur(8px); z-index: 100; }
+  .nav-btn { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; background: none; border: 1px solid var(--border); color: var(--muted); padding: .5rem 1.2rem; border-radius: 2px; cursor: pointer; transition: all .2s; }
+  .nav-btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); }
+  .nav-btn:disabled { opacity: .25; cursor: default; }
+  .nav-counter { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--muted); letter-spacing: .1em; }
+  .nav-brand { font-family: 'DM Mono', monospace; font-size: .62rem; color: rgba(240,244,255,.25); letter-spacing: .08em; }
+
+  /* Title slide accent */
+  .hero-line { width: 60px; height: 2px; background: var(--cyan); margin-bottom: 1.4rem; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide active">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div style="max-width: 680px;">
+      <div class="slide-label">Employee Onboarding</div>
+      <div class="hero-line"></div>
+      <h1>Starting Strong.<br><em>What you need to know<br>in your first 30 days.</em></h1>
+      <div class="divider"></div>
+      <p class="sub">A practical onboarding guide for new team members in customer-facing roles. Built around clear expectations, real skill-building, and the support you need to do this job well.</p>
+      <div style="margin-top: 1.8rem; display: flex; gap: .75rem; flex-wrap: wrap;">
+        <span class="tag cyan">Call Center Operations</span>
+        <span class="tag">Onboarding</span>
+        <span class="tag">First 30 Days</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: What this deck covers -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">Overview</div>
+    <h2>What this training covers.</h2>
+    <p class="sub" style="margin-bottom: 2rem;">This deck walks you through everything you need to hit the ground running — not just policies, but the thinking behind how we do this work.</p>
+    <div class="three-col">
+      <div class="card cyan">
+        <div class="card-label">Part 1</div>
+        <div class="card-title">Your Role</div>
+        <div class="card-body">What the job actually requires, who you're serving, and what good performance looks like from day one.</div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">Part 2</div>
+        <div class="card-title">The Work</div>
+        <div class="card-body">Call handling, communication standards, tools, escalation protocols, and quality expectations.</div>
+      </div>
+      <div class="card violet">
+        <div class="card-label">Part 3</div>
+        <div class="card-title">Your First 30 Days</div>
+        <div class="card-body">Milestones, checkpoints, support resources, and how to make the most of your ramp period.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: The person on the other end -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">Your Role</div>
+    <h2>The person on the<br><em>other end of the line.</em></h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <p class="body" style="margin-bottom: 1.2rem;">Every call you take is someone's moment of need. They may be frustrated, confused, worried, or simply in a hurry. Your job is to meet them where they are — not where you wish they were.</p>
+        <p class="body" style="margin-bottom: 1.2rem;">The best call center professionals don't just solve problems. They make people feel heard first, then helped. That order matters more than most people realize.</p>
+        <div class="highlight-box">
+          <p class="body" style="font-size: .85rem;">"A customer who felt listened to will remember the interaction differently than one who got the right answer delivered poorly."</p>
+        </div>
+      </div>
+      <div class="list" style="margin-top: .5rem;">
+        <div class="list-item"><span class="bullet">→</span> They may not know the right words to describe their problem</div>
+        <div class="list-item"><span class="bullet">→</span> Their frustration is almost never personal</div>
+        <div class="list-item"><span class="bullet">→</span> How you sound matters as much as what you say</div>
+        <div class="list-item"><span class="bullet">→</span> They deserve your full attention for the duration of the call</div>
+        <div class="list-item"><span class="bullet">→</span> A calm voice in a stressful moment is a skill — and a gift</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Your role and responsibilities -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">Your Role</div>
+    <h2>What this role requires.</h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">Core Responsibilities</div>
+        <div class="timeline">
+          <div class="timeline-row">
+            <div class="timeline-num">Handle</div>
+            <div><div class="timeline-title">Inbound contacts</div><div class="timeline-body">Answer calls, chats, or tickets promptly and professionally within service level targets.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num">Resolve</div>
+            <div><div class="timeline-title">Customer issues</div><div class="timeline-body">Diagnose, troubleshoot, and resolve issues at first contact when possible. Know when to escalate.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num">Document</div>
+            <div><div class="timeline-title">Every interaction</div><div class="timeline-body">Accurate, complete notes in the system after every contact. If it isn't documented, it didn't happen.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num">Represent</div>
+            <div><div class="timeline-title">The brand</div><div class="timeline-body">Your tone, accuracy, and care reflect directly on the organization in every interaction.</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">What Success Looks Like</div>
+        <div class="list">
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">✓</span> Customers leave the interaction with their issue resolved or a clear next step</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">✓</span> Documentation is complete and accurate before moving to the next call</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">✓</span> Tone remains professional even when the customer does not</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">✓</span> Escalation decisions are timely — not too early, not too late</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">✓</span> Quality scores trend upward through the first 30 days</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Communication standards -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label gold">The Work</div>
+    <h2>Communication standards.</h2>
+    <p class="sub" style="margin-bottom: 1.8rem;">Every word you choose sends a signal. These standards aren't rules to memorize — they're habits to build.</p>
+    <div class="three-col">
+      <div class="card cyan">
+        <div class="card-label">Tone</div>
+        <div class="card-title">Calm, clear, confident</div>
+        <div class="card-body">Even under pressure. Especially under pressure. Your tone is contagious — lead with steadiness and most callers will follow.</div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">Language</div>
+        <div class="card-title">Plain and direct</div>
+        <div class="card-body">No jargon. No filler phrases. Say what you mean, confirm what you heard, and summarize what happens next before you hang up.</div>
+      </div>
+      <div class="card violet">
+        <div class="card-label">Listening</div>
+        <div class="card-title">Active, not passive</div>
+        <div class="card-body">Reflect back what you heard. Ask clarifying questions before jumping to a solution. People know when they're being actually heard.</div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top: 1.5rem;">
+      <div style="display: flex; gap: 2.5rem; flex-wrap: wrap;">
+        <div><div style="font-family: 'DM Mono', monospace; font-size: .6rem; color: rgba(0,212,200,.6); letter-spacing: .1em; margin-bottom: .4rem;">SAY THIS</div><div class="body" style="font-size: .82rem;">"Let me make sure I understand — you're saying X. Is that right?"</div></div>
+        <div><div style="font-family: 'DM Mono', monospace; font-size: .6rem; color: rgba(240,244,255,.3); letter-spacing: .1em; margin-bottom: .4rem;">NOT THIS</div><div class="body" style="font-size: .82rem; color: var(--muted);">"Yeah, I got it." [immediately starts talking about the solution]</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Call handling flow -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label gold">The Work</div>
+    <h2>Call handling flow.</h2>
+    <p class="sub" style="margin-bottom: 1.8rem;">Every interaction has the same basic shape. Internalizing this structure frees up your attention for the parts that actually require judgment.</p>
+    <div style="display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 760px;">
+      <div class="step-row"><div class="step-n">1</div><div><div class="step-title">Open professionally</div><div class="step-body">Greet, identify yourself, and invite them to share — in that order. First impressions set the tone for the entire call.</div></div></div>
+      <div class="step-row"><div class="step-n">2</div><div><div class="step-title">Listen and verify</div><div class="step-body">Let them finish. Reflect back what you heard. Confirm before diagnosing. Skipping this step is the most common root cause of repeat contacts.</div></div></div>
+      <div class="step-row"><div class="step-n">3</div><div><div class="step-title">Diagnose and act</div><div class="step-body">Work the issue. Pull up the account, reference documentation, check the knowledge base. Think out loud when it helps — silence makes callers anxious.</div></div></div>
+      <div class="step-row"><div class="step-n">4</div><div><div class="step-title">Confirm resolution</div><div class="step-body">Before closing: state what was done, what happens next (if anything), and ask if there's anything else. Don't assume you're done.</div></div></div>
+      <div class="step-row"><div class="step-n gold" style="background: var(--gold);">5</div><div><div class="step-title">Document immediately</div><div class="step-body">Notes go in before the next call. Memory degrades fast. A complete record protects you, the customer, and the team.</div></div></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Tools & systems -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label gold">The Work</div>
+    <h2>Tools and systems.</h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <p class="body" style="margin-bottom: 1.4rem;">You'll be trained on each system before going live. The goal in the first week isn't mastery — it's familiarity. Know where to look when you need something.</p>
+        <div class="list">
+          <div class="list-item"><span class="bullet">◈</span><div><strong style="font-size: .88rem;">CRM / Customer System</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">Where customer records live. Every interaction gets documented here. Learn the search function first.</div></div></div>
+          <div class="list-item"><span class="bullet">◈</span><div><strong style="font-size: .88rem;">Knowledge Base</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">Your first stop for answers. If it's documented, it's there. Search before escalating.</div></div></div>
+          <div class="list-item"><span class="bullet">◈</span><div><strong style="font-size: .88rem;">Phone / Queue System</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">How contacts reach you. Know how to put calls on hold, transfer, and conference before you go live.</div></div></div>
+          <div class="list-item"><span class="bullet">◈</span><div><strong style="font-size: .88rem;">Team Chat</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">Your connection to the team. Ask questions here. Someone has seen what you're dealing with.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="highlight-box gold">
+          <div style="font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--gold); letter-spacing: .1em; margin-bottom: .7rem;">IMPORTANT</div>
+          <p class="body" style="font-size: .85rem; margin-bottom: .8rem;">You will not remember everything from training. That is expected and normal.</p>
+          <p class="body" style="font-size: .85rem; margin-bottom: .8rem;">Use your resources: the knowledge base, your team chat, and your supervisor. Looking things up is not a weakness — guessing and getting it wrong is.</p>
+          <p class="body" style="font-size: .85rem;">When in doubt: slow down, check your sources, and ask before acting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Quality and what good looks like -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label gold">The Work</div>
+    <h2>Quality — what good<br><em class="gold">actually looks like.</em></h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <p class="body" style="margin-bottom: 1.2rem;">Quality isn't a score on a form. It's what a customer experiences when someone does this job well. Scores are a proxy — don't lose sight of what they're measuring.</p>
+        <div class="timeline">
+          <div class="timeline-row">
+            <div class="timeline-num gold">Accuracy</div>
+            <div><div class="timeline-body">Information given to the customer is correct. Promises made are followed through on.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num gold">Efficiency</div>
+            <div><div class="timeline-body">The issue is resolved in a reasonable amount of time without unnecessary back-and-forth.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num gold">Empathy</div>
+            <div><div class="timeline-body">The customer feels heard, not processed. Tone is human, not scripted.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num gold">Compliance</div>
+            <div><div class="timeline-body">Required disclosures, verification steps, and documentation are completed every time.</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">Quality Scoring Overview</div>
+        <div class="card gold" style="margin-bottom: .75rem;">
+          <div class="card-title">Excellent</div>
+          <div class="card-body">Meets all requirements with no meaningful gaps. Customer experience is seamless.</div>
+        </div>
+        <div class="card cyan" style="margin-bottom: .75rem;">
+          <div class="card-title">Meets Standard</div>
+          <div class="card-body">Core expectations are met. Minor opportunities for improvement that don't affect the outcome.</div>
+        </div>
+        <div class="card" style="margin-bottom: .75rem; border-left: 2px solid rgba(240,244,255,.2);">
+          <div class="card-title">Needs Improvement</div>
+          <div class="card-body">One or more requirements missed. Coaching conversation to follow. This is expected early — it's part of ramp.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Escalation -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label gold">The Work</div>
+    <h2>When to escalate.</h2>
+    <p class="sub" style="margin-bottom: 1.8rem;">Escalation is a tool, not a failure. Knowing when to use it is part of the job — holding on to an interaction you can't resolve helps no one.</p>
+    <div class="two-col">
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold);">Escalate When...</div>
+        <div class="list">
+          <div class="list-item"><span class="bullet gold">→</span> The customer's issue requires authority or access you don't have</div>
+          <div class="list-item"><span class="bullet gold">→</span> The interaction has become emotionally volatile and de-escalation isn't working</div>
+          <div class="list-item"><span class="bullet gold">→</span> You've reached the edge of your knowledge and the knowledge base hasn't resolved it</div>
+          <div class="list-item"><span class="bullet gold">→</span> A potential compliance or legal issue has come up</div>
+          <div class="list-item"><span class="bullet gold">→</span> The customer is explicitly requesting to speak to a supervisor</div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan);">How to Escalate Well</div>
+        <div class="step-row"><div class="step-n" style="font-size: .6rem;">1</div><div><div class="step-title">Brief the customer</div><div class="step-body">Tell them what you're doing and why. Don't just put them on hold and disappear.</div></div></div>
+        <div class="step-row"><div class="step-n" style="font-size: .6rem;">2</div><div><div class="step-title">Brief the receiver</div><div class="step-body">Before transferring: account name, issue summary, what you already tried. This protects the customer from starting over.</div></div></div>
+        <div class="step-row"><div class="step-n" style="font-size: .6rem;">3</div><div><div class="step-title">Document the transfer</div><div class="step-body">Note what happened, what was attempted, and where the contact went. Every time.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Emotional labor -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label violet">The Human Side</div>
+    <h2>This job has a<br><em class="violet">real emotional weight.</em></h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <p class="body" style="margin-bottom: 1.2rem;">Customer-facing work requires managing your own emotional state while absorbing the emotional states of others — call after call. That takes real energy, and it accumulates.</p>
+        <p class="body" style="margin-bottom: 1.2rem;">Difficult calls are not a personal failure. A customer in distress is not a reflection of your competence. Learning to process that distinction is one of the most important skills in this role.</p>
+        <div class="highlight-box violet">
+          <p class="body" style="font-size: .85rem;">"You are not required to absorb someone else's frustration as your own. You are required to respond to it professionally. Those are different things."</p>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">How to Protect Your Capacity</div>
+        <div class="list">
+          <div class="list-item"><span class="bullet violet" style="color: var(--violet);">◈</span> Take your breaks. Fully. Step away from your screen.</div>
+          <div class="list-item"><span class="bullet violet" style="color: var(--violet);">◈</span> Talk to your team lead after particularly hard calls — that's what they're there for</div>
+          <div class="list-item"><span class="bullet violet" style="color: var(--violet);">◈</span> Notice when your patience is running low and slow down, not up</div>
+          <div class="list-item"><span class="bullet violet" style="color: var(--violet);">◈</span> Learn what resets you between calls and build that habit early</div>
+          <div class="list-item"><span class="bullet violet" style="color: var(--violet);">◈</span> Ask for support. Not asking is the risk — not the asking.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: First week at a glance -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">First 30 Days</div>
+    <h2>Your first week<br><em>at a glance.</em></h2>
+    <div class="timeline" style="margin-top: 1.5rem; max-width: 800px;">
+      <div class="timeline-row">
+        <div class="timeline-num">Day 1</div>
+        <div><div class="timeline-title">Orientation & access</div><div class="timeline-body">Meet your team, get system access, complete required paperwork. You won't take any contacts today — focus on orienting.</div></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-num">Days 2–3</div>
+        <div><div class="timeline-title">Systems & tools training</div><div class="timeline-body">Walk-through of every tool you'll use. Practice navigating accounts, documentation, and the knowledge base before any live contacts.</div></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-num">Days 4–5</div>
+        <div><div class="timeline-title">Shadowing</div><div class="timeline-body">Listen to experienced agents handling real contacts. Take notes on what you notice — tone, pacing, how they handle transitions. Ask questions after each one.</div></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-num gold">Week 2</div>
+        <div><div class="timeline-title">Supervised live contacts</div><div class="timeline-body">You'll begin taking contacts with a trainer or lead monitoring. Expect feedback after each one. This is the fastest way to learn.</div></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-num gold">Weeks 3–4</div>
+        <div><div class="timeline-title">Increasing independence</div><div class="timeline-body">You'll handle contacts more independently with support available. Weekly check-ins with your lead to review quality scores and address questions.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: 30-60-90 milestones -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">First 30 Days</div>
+    <h2>30 · 60 · 90 day<br><em>milestones.</em></h2>
+    <div class="three-col" style="margin-top: 1.5rem;">
+      <div class="card cyan">
+        <div class="card-label">Day 30</div>
+        <div class="card-title">Foundation</div>
+        <div class="card-body" style="display: flex; flex-direction: column; gap: .4rem; margin-top: .5rem;">
+          <div>✓ Systems navigated independently</div>
+          <div>✓ Call flow followed consistently</div>
+          <div>✓ Documentation complete on every contact</div>
+          <div>✓ Escalation decisions mostly accurate</div>
+          <div>✓ Quality scores trending toward standard</div>
+        </div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">Day 60</div>
+        <div class="card-title">Confidence</div>
+        <div class="card-body" style="display: flex; flex-direction: column; gap: .4rem; margin-top: .5rem;">
+          <div>✓ Meeting quality standard consistently</div>
+          <div>✓ Handle time within target range</div>
+          <div>✓ Minimal supervisor check-ins needed</div>
+          <div>✓ Peer support — helping newer agents</div>
+          <div>✓ First contact resolution improving</div>
+        </div>
+      </div>
+      <div class="card violet">
+        <div class="card-label">Day 90</div>
+        <div class="card-title">Independence</div>
+        <div class="card-body" style="display: flex; flex-direction: column; gap: .4rem; margin-top: .5rem;">
+          <div>✓ Full independent performance</div>
+          <div>✓ Quality scores at or above team average</div>
+          <div>✓ Handling complex contacts with confidence</div>
+          <div>✓ Proactive — flagging patterns, not just issues</div>
+          <div>✓ Ready for expanded responsibilities</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top: 1.5rem; padding: 1rem 1.4rem;">
+      <p class="body" style="font-size: .82rem;">These milestones are a guide, not a deadline. If you're not at each benchmark exactly on the day, that's normal. What matters is the trajectory — consistent improvement and openness to feedback.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Performance expectations -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">First 30 Days</div>
+    <h2>What performance<br><em>expectations look like.</em></h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <p class="body" style="margin-bottom: 1.4rem;">Performance in this role is measured across several dimensions. No single metric tells the whole story — your lead looks at the pattern, not individual data points.</p>
+        <div class="timeline">
+          <div class="timeline-row">
+            <div class="timeline-num">Quality</div>
+            <div><div class="timeline-body">Monitored contacts scored against a consistent rubric. Reviewed in regular 1:1s with your team lead.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num">Attendance</div>
+            <div><div class="timeline-body">Reliability and schedule adherence. The team counts on you being there when you're scheduled.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num">Handle Time</div>
+            <div><div class="timeline-body">Average time per contact. Goal is efficiency without rushing — quality always comes first during ramp.</div></div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-num">Resolution</div>
+            <div><div class="timeline-body">First contact resolution rate. How often the customer gets what they needed without having to call back.</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">How Feedback Works Here</div>
+        <p class="body" style="margin-bottom: 1rem;">Feedback is ongoing, not saved for review cycles. Your team lead may pull you aside same-day after a monitored contact — that's a feature, not a bug.</p>
+        <div class="list">
+          <div class="list-item"><span class="bullet">→</span> Weekly 1:1 check-ins during the first 90 days</div>
+          <div class="list-item"><span class="bullet">→</span> Real-time coaching on specific calls when needed</div>
+          <div class="list-item"><span class="bullet">→</span> Written quality feedback with examples</div>
+          <div class="list-item"><span class="bullet">→</span> Your questions and concerns are always on the agenda</div>
+        </div>
+        <div class="highlight-box gold" style="margin-top: 1.2rem; padding: .9rem 1.2rem;">
+          <p class="body" style="font-size: .82rem;">If something isn't working, say so early. The only performance problem we can't solve is the one we don't know about.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Support network -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label violet">Your Support</div>
+    <h2>You are not<br><em class="violet">doing this alone.</em></h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <p class="body" style="margin-bottom: 1.4rem;">Every person on this team went through what you're going through. The people around you are your most valuable resource — use them.</p>
+        <div class="list">
+          <div class="list-item">
+            <span class="bullet violet" style="color: var(--violet);">◈</span>
+            <div><strong style="font-size: .88rem;">Your Team Lead</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">First contact for any issue — performance questions, difficult contacts, process confusion, or just needing a minute to decompress after a hard call.</div></div>
+          </div>
+          <div class="list-item">
+            <span class="bullet violet" style="color: var(--violet);">◈</span>
+            <div><strong style="font-size: .88rem;">Your Onboarding Buddy</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">A peer who's been through training recently and knows what it feels like right now. Ask them anything — they've been there.</div></div>
+          </div>
+          <div class="list-item">
+            <span class="bullet violet" style="color: var(--violet);">◈</span>
+            <div><strong style="font-size: .88rem;">The Team</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">Team chat is there for real-time help. Someone on the floor has seen what you're dealing with — ask early, not after you've been stuck for 10 minutes.</div></div>
+          </div>
+          <div class="list-item">
+            <span class="bullet violet" style="color: var(--violet);">◈</span>
+            <div><strong style="font-size: .88rem;">HR / People Team</strong><div style="font-size: .78rem; color: var(--muted); margin-top: .15rem;">For anything beyond the scope of your team lead — benefits, accommodations, or concerns you need to raise confidentially.</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="highlight-box violet">
+          <div style="font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--violet); letter-spacing: .1em; margin-bottom: .8rem;">A NOTE ON ASKING FOR HELP</div>
+          <p class="body" style="font-size: .85rem; margin-bottom: .8rem;">New team members often wait too long to ask for help because they don't want to look like they don't know something.</p>
+          <p class="body" style="font-size: .85rem; margin-bottom: .8rem;">Here's the reality: you don't know some things yet. That's why you're in training. Asking questions is the fastest path to the kind of independence that comes at 90 days.</p>
+          <p class="body" style="font-size: .85rem;">The agents who ramp fastest are almost always the ones who ask the most questions early.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: Next steps -->
+  <div class="slide">
+    <div class="slide-corner">SAMPLE DOCUMENT · LAUREN MCDONALD</div>
+    <div class="slide-label">Wrap-Up</div>
+    <h2>You've got what<br><em>it takes. Here's what's next.</em></h2>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">Before Your First Live Contact</div>
+        <div class="list" style="margin-bottom: 1.5rem;">
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">□</span> System access confirmed and working</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">□</span> Knowledge base bookmarked and navigated at least once</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">□</span> Call flow walkthrough completed</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">□</span> Escalation path clear — you know who to contact and how</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">□</span> At least 2 shadowing sessions completed</div>
+          <div class="list-item"><span class="bullet cyan" style="color: var(--cyan);">□</span> First 1:1 with team lead scheduled</div>
+        </div>
+        <div class="highlight-box">
+          <p class="body" style="font-size: .85rem;">This checklist is a starting point. Your team lead will walk you through anything that needs more depth before you go live.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card-label" style="margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);">Remember</div>
+        <div class="list">
+          <div class="list-item"><span class="bullet gold" style="color: var(--gold);">✦</span> You were hired because someone believed you could do this job</div>
+          <div class="list-item"><span class="bullet gold" style="color: var(--gold);">✦</span> Everyone around you went through exactly what you're going through</div>
+          <div class="list-item"><span class="bullet gold" style="color: var(--gold);">✦</span> Mistakes during ramp are expected — they're part of the design</div>
+          <div class="list-item"><span class="bullet gold" style="color: var(--gold);">✦</span> The fastest path to confidence is volume — take the contacts, get the feedback, adjust</div>
+          <div class="list-item"><span class="bullet gold" style="color: var(--gold);">✦</span> Ask early. Ask often. That's what good looks like at this stage.</div>
+        </div>
+        <div style="margin-top: 1.8rem;">
+          <div style="font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-style: italic; color: var(--white); margin-bottom: .4rem;">"Good training doesn't fill people with knowledge. It gives them a foundation to learn from experience."</div>
+          <div style="font-family: 'DM Mono', monospace; font-size: .62rem; color: var(--cyan); letter-spacing: .1em;">— Learning Craft AI · Lauren McDonald</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<div class="nav-bar">
+  <button class="nav-btn" id="prev-btn" onclick="goTo(current - 1)">← Prev</button>
+  <div style="display: flex; align-items: center; gap: 2rem;">
+    <span class="nav-brand">Call Center Onboarding · Lauren McDonald</span>
+    <span class="nav-counter" id="counter">1 / 15</span>
+  </div>
+  <button class="nav-btn" id="next-btn" onclick="goTo(current + 1)">Next →</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, total - 1));
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev-btn').disabled = current === 0;
+    document.getElementById('next-btn').disabled = current === total - 1;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+  });
+
+  goTo(0);
+</script>
+</body>
+</html>
